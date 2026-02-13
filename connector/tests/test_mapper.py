@@ -145,9 +145,7 @@ class TestMapper(TransactionComponentRegistryCase):
                 pass
 
         class FryMapperInherit(Component):
-            _inherit = (  # pylint: disable=consider-merging-classes-inherited
-                "fry.mapper"
-            )
+            _inherit = "fry.mapper"
             _apply_on = "res.users"
 
             @changed_by("email")
@@ -681,10 +679,7 @@ class TestMapperRecordsets(TransactionComponentRegistryCase):
 
         self._build_components(MyMapper)
 
-        parent = self.env["res.partner"].create({"name": "Deco Addict"})
-        partner = self.env["res.partner"].create(
-            {"name": "My Company", "parent_id": parent.id}
-        )
+        partner = self.env.ref("base.res_partner_address_4")
         mapper = self.comp_registry["my.mapper"](self.work)
         map_record = mapper.map_record(partner)
         expected = {"parent_name": "Deco Addict"}
