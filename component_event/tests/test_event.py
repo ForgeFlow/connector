@@ -14,7 +14,7 @@ from odoo.addons.component_event.components.event import skip_if
 from odoo.addons.component_event.core import EventWorkContext
 
 
-@tagged("standard", "at_install")
+@tagged("standard", "-post_install", "at_install")
 class TestEventWorkContext(BaseCase):
     """Test Events Components"""
 
@@ -226,7 +226,7 @@ class TestEvent(ComponentRegistryCase):
         collected = self.collecter.collect_events("on_record_create")
         # CollectedEvents.events contains the collected events
         self.assertEqual(1, len(collected.events))
-        event = list(collected.events)[0]
+        event = next(iter(collected.events))
         self.assertEqual(self.work, event.__self__.work)
         self.assertEqual(self.work.env, event.__self__.work.env)
 
@@ -250,7 +250,7 @@ class TestEvent(ComponentRegistryCase):
         collected = collecter.collect_events("on_record_create")
         # CollectedEvents.events contains the collected events
         self.assertEqual(1, len(collected.events))
-        event = list(collected.events)[0]
+        event = next(iter(collected.events))
         self.assertEqual(work, event.__self__.work)
         self.assertEqual(env, event.__self__.work.env)
 
@@ -325,7 +325,7 @@ class TestEvent(ComponentRegistryCase):
         class MyOtherEventListener(Component):
             _name = "my.other.event.listener"
             _inherit = "base.event.listener"
-            _apply_on = ["res.country"]
+            _apply_on = ["res.country"]  # noqa: RUF012
 
             def on_record_create(self):
                 pass
@@ -407,7 +407,7 @@ class TestEventFromModel(TransactionComponentRegistryCase):
         class PartnerListener(Component):
             _name = "partner.event.listener"
             _inherit = "base.event.listener"
-            _apply_on = ["res.partner"]
+            _apply_on = ["res.partner"]  # noqa: RUF012
 
             def on_foo(self, record, name):
                 record.ref = name
@@ -415,7 +415,7 @@ class TestEventFromModel(TransactionComponentRegistryCase):
         class UserListener(Component):
             _name = "user.event.listener"
             _inherit = "base.event.listener"
-            _apply_on = ["res.users"]
+            _apply_on = ["res.users"]  # noqa: RUF012
 
             def on_foo(self, record, name):
                 raise AssertionError()

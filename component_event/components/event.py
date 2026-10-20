@@ -219,13 +219,13 @@ class EventCollecter(Component):
     @classmethod
     def _complete_component_build(cls):
         """Create a cache on the class when the component is built"""
-        super()._complete_component_build()
+        res = super()._complete_component_build()
         # the _cache being on the component class, which is
         # dynamically rebuild when odoo registry is rebuild, we
         # are sure that the result is always the same for a lookup
         # until the next rebuild of odoo's registry
         cls._cache = LRUCache(maxsize=DEFAULT_EVENT_CACHE_SIZE)
-        return
+        return res
 
     def _collect_events(self, name):
         collection_name = None
@@ -292,6 +292,6 @@ class EventListener(AbstractComponent):
 
     @classmethod
     def _complete_component_build(cls):
-        super()._complete_component_build()
+        res = super()._complete_component_build()
         cls._build_event_listener_component()
-        return
+        return res

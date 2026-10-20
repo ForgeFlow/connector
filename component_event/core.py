@@ -95,12 +95,10 @@ class EventWorkContext(WorkContext):
         """
         if self._collection is None and collection is None:
             raise ValueError("you must provide a collection to work with")
-        if collection is not None:
-            if self.env is not collection.env:
-                raise ValueError(
-                    "the Odoo env of the collection must be "
-                    "the same than the current one"
-                )
+        if collection is not None and self.env is not collection.env:
+            raise ValueError(
+                "the Odoo env of the collection must be the same than the current one"
+            )
         kwargs = {
             attr_name: getattr(self, attr_name) for attr_name in self._propagate_kwargs
         }
@@ -155,4 +153,4 @@ class EventWorkContext(WorkContext):
 
     def __str__(self):
         return f"""EventWorkContext(
-                {repr(self._env or self._collection)},{self.model_name})"""
+                {self._env or self._collection!r},{self.model_name})"""
