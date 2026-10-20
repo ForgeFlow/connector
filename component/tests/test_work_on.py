@@ -24,7 +24,7 @@ class TestWorkOn(TransactionComponentRegistryCase):
 
     def test_collection_work_on(self):
         """Create a new instance and test attributes access"""
-        collection_record = self.env[self.collection._name].new()
+        collection_record = self.env[self.collection._name].browse(1)
         with collection_record.work_on("res.partner") as work:
             self.assertEqual(collection_record, work.collection)
             self.assertEqual("collection.base", work.collection._name)
@@ -37,7 +37,7 @@ class TestWorkOn(TransactionComponentRegistryCase):
         registry = ComponentRegistry()
         collection_record = self.collection.with_context(
             components_registry=registry
-        ).new()
+        ).browse(1)
         with collection_record.work_on("res.partner") as work:
             self.assertEqual(collection_record, work.collection)
             self.assertEqual("collection.base", work.collection._name)

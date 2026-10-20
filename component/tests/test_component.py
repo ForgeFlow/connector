@@ -35,13 +35,13 @@ class TestComponent(TransactionComponentRegistryCase):
             _name = "component1"
             _collection = "collection.base"
             _usage = "for.test"
-            _apply_on = ["res.partner"]
+            _apply_on = ["res.partner"]  # noqa: RUF012
 
         class Component2(Component):
             _name = "component2"
             _collection = "collection.base"
             _usage = "for.test"
-            _apply_on = ["res.users"]
+            _apply_on = ["res.users"]  # noqa: RUF012
 
         # build the components and register them in our
         # test component registry
@@ -50,7 +50,7 @@ class TestComponent(TransactionComponentRegistryCase):
 
         # our collection, in a less abstract use case, it
         # could be a record of 'magento.backend' for instance
-        self.collection_record = self.env[self.collection._name].new()
+        self.collection_record = self.env[self.collection._name].browse(1)
 
         @contextmanager
         def get_base():
@@ -111,18 +111,22 @@ class TestComponent(TransactionComponentRegistryCase):
     def test_component_get_by_name_wrong_model(self):
         """Use component_by_name with a model not in _apply_on"""
         msg = "Component with name 'component2' can't be used for model 'res.partner'.*"
-        with self.get_base() as base:
-            with self.assertRaisesRegex(NoComponentError, msg):
-                # we ask for the model 'component2' but we are working
-                # with res.partner, and it only accepts res.users
-                base.component_by_name("component2")
+        with (
+            self.get_base() as base,
+            self.assertRaisesRegex(NoComponentError, msg),
+        ):
+            # we ask for the model 'component2' but we are working
+            # with res.partner, and it only accepts res.users
+            base.component_by_name("component2")
 
     def test_component_get_by_name_not_exist(self):
         """Use component_by_name on a component that do not exist"""
         msg = "No component with name 'foo' found."
-        with self.get_base() as base:
-            with self.assertRaisesRegex(NoComponentError, msg):
-                base.component_by_name("foo")
+        with (
+            self.get_base() as base,
+            self.assertRaisesRegex(NoComponentError, msg),
+        ):
+            base.component_by_name("foo")
 
     def test_component_by_usage_same_model(self):
         """Use component(usage=...) on the same model"""
@@ -176,13 +180,12 @@ class TestComponent(TransactionComponentRegistryCase):
         Component3._build_component(self.comp_registry)
         Component1._build_component(self.comp_registry)
 
-        with self.get_base() as base:
-            with self.assertRaises(SeveralComponentError):
-                # When a component has no _apply_on, it means it can be applied
-                # on *any* model. Here, the candidates components would be:
-                # component3 (because it has no _apply_on so apply in any case)
-                # component4 (for the same reason)
-                base.component(usage="for.test")
+        with self.get_base() as base, self.assertRaises(SeveralComponentError):
+            # When a component has no _apply_on, it means it can be applied
+            # on *any* model. Here, the candidates components would be:
+            # component3 (because it has no _apply_on so apply in any case)
+            # component4 (for the same reason)
+            base.component(usage="for.test")
 
     def test_component_error_several_same_model(self):
         """Use component(usage=...) when more than one component match a model"""
@@ -193,16 +196,15 @@ class TestComponent(TransactionComponentRegistryCase):
             _name = "component3"
             _collection = "collection.base"
             _usage = "for.test"
-            _apply_on = ["res.partner"]
+            _apply_on = ["res.partner"]  # noqa: RUF012
 
         Component3._build_component(self.comp_registry)
 
-        with self.get_base() as base:
-            with self.assertRaises(SeveralComponentError):
-                # Here, the candidates components would be:
-                # component1 (because we are working with res.partner),
-                # component3 (for the same reason)
-                base.component(usage="for.test")
+        with self.get_base() as base, self.assertRaises(SeveralComponentError):
+            # Here, the candidates components would be:
+            # component1 (because we are working with res.partner),
+            # component3 (for the same reason)
+            base.component(usage="for.test")
 
     def test_component_specific_model(self):
         """Use component(usage=...) when more than one component match but
@@ -338,9 +340,8 @@ class TestComponent(TransactionComponentRegistryCase):
 
     def test_no_component(self):
         """No component found for asked usage"""
-        with self.get_base() as base:
-            with self.assertRaises(NoComponentError):
-                base.component(usage="foo")
+        with self.get_base() as base, self.assertRaises(NoComponentError):
+            base.component(usage="foo")
 
     def test_no_many_component(self):
         """No component found for asked usage for many_components()"""
@@ -369,7 +370,7 @@ class TestComponent(TransactionComponentRegistryCase):
             _name = "foo"
             _collection = "collection.base"
             _usage = "speaker"
-            _apply_on = ["res.partner"]
+            _apply_on = ["res.partner"]  # noqa: RUF012
 
             @classmethod
             def _component_match(cls, work, **kw):
@@ -379,7 +380,7 @@ class TestComponent(TransactionComponentRegistryCase):
             _name = "bar"
             _collection = "collection.base"
             _usage = "speaker"
-            _apply_on = ["res.partner"]
+            _apply_on = ["res.partner"]  # noqa: RUF012
 
         self._build_components(Foo, Bar)
 

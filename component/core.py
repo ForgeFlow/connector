@@ -19,6 +19,7 @@ The most common classes used publicly are:
 import logging
 import operator
 from collections import OrderedDict, defaultdict
+from typing import ClassVar
 
 from odoo import models
 from odoo.tools.misc import LastOrderedSet, OrderedSet
@@ -475,7 +476,7 @@ class WorkContext:
         return [comp(work_context) for comp in component_classes]
 
     def __str__(self):
-        return f"WorkContext({self.model_name}, {repr(self.collection)})"
+        return f"WorkContext({self.model_name}, {self.collection!r})"
 
     __repr__ = __str__
 
@@ -488,7 +489,7 @@ class MetaComponent(type):
 
     """
 
-    _modules_components = defaultdict(list)
+    _modules_components: ClassVar[defaultdict] = defaultdict(list)
 
     def __init__(cls, name, bases, attrs):
         if not cls._register:

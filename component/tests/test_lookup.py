@@ -127,7 +127,7 @@ class TestLookup(TransactionComponentRegistryCase):
             _collection = "foobar"
             _usage = "speaker"
             # support list
-            _apply_on = ["res.partner"]
+            _apply_on = ["res.partner"]  # noqa: RUF012
 
         class Bar(Component):
             _name = "bar"
